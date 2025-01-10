@@ -1,0 +1,4 @@
+"0","write.csv(final_results, ""tukeyhsd_blockwise.csv"",
+          sep="","")
+"
+"2","Avis : une tentative de modification de 'sep' a échoué"

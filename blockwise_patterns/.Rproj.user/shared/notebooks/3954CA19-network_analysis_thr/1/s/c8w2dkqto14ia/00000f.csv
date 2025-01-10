@@ -1,0 +1,6 @@
+"0","df <- read.csv(file = ""blockwise_patterns_schaefer200_thresholded.csv"", "
+"0","               stringsAsFactors = TRUE)"
+"0","df$cluster_label <- factor(df$cluster_label)"
+"0","df$fold <- factor(df$fold)"
+"0","# Drop the column named ""X"""
+"0","df <- df[, !colnames(df) %in% ""X""]"

@@ -1,0 +1,215 @@
+---
+title: "Aide anova"
+author: "INSERER VOTRE NOM"
+date: "2023-10-25"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### AVANT PROPOS #####
+
+Ce document est une adaptation du script "Aide_Anova.R" en format R Markdown. 
+Ce format est principalement avantageux pour nous car il permet d'avoir les sorties
+R en dessous de chaque "bloc" de code que l'on écrit, ce qui est plus facile pour
+suivre ainsi que pour avoir un rapport tout compris de la séance.
+
+Pour ajouter des blocs de code, il suffit de cliquer sur le [C] vert en haut à 
+droite de la fenêtre et de sélectionner R. Tout ce qui est écrit dans un bloc sera
+alors interprété comme du code !
+
+Un bloc de code peut ensuite être exécuté en cliquant sur la flèche verte à droite
+de ce dernier, ou avec le raccourci ctrl + shift + entrée; on peut aussi exécuter 
+une seule ligne avec ctrl + entrée une fois le curseur positionné sur la ligne
+
+Ce fichier comprend toutes les fonctions dont nous aurons besoin pour les exercices,
+déjà insérées dans des blocs de code.
+
+Vous pouvez en créer une copie pour l'exercice afin de le réutiliser et l'adapter
+correctement au cas présent.
+
+
+Vous pouvez également exporter votre script au format PDF pour créer en un clic un compte
+rendu de la séance tout propre (en haut: "knit" puis "knit to pdf"), mais cela nécessite
+l'installation d'un programme indépendant relativement volumineux (quelques Go): LaTeX 
+(https://www.latex-project.org/get/)
+
+
+# Importation des fichiers
+
+Garder une trace de l'importation dans votre script, en utilisant la fonction
+read.delim:
+
+```{r}
+df <- read.csv(file = "blockwise_patterns_schaefer200.csv", 
+               stringsAsFactors = TRUE)
+df$cluster_label <- factor(df$cluster_label)
+df$fold <- factor(df$fold)
+# Drop the column named "X"
+df <- df[, !colnames(df) %in% "X"]
+```
+
+
+
+# VERIFIER LES DONNEES
+
+Chaque instruction nécessite d'indiquer où se trouvent les données sur lesquelles
+on travaille. Cela se fait en donnant le nom de l'objet et la colonne où est
+l'information sur laquelle on veut travailler: exoX$Nom_de_colonne
+
+```{r}
+table(exoX$VI)  #donne le nombre de mesures pour la VI (remplacez "exoX" et "VI"
+                #par ce qui vous int?resse dans votre cas )
+```
+
+Faire un boxplot des valeurs de la VD
+Permet de regarder la distribution des données
+boxplot(VD)
+
+Séparer les boxplot en fonction des modalités de notre VI
+Faites le pour afficher les valeurs de TR en fonction de la drogue
+
+```{r}
+boxplot(VD~VI)
+```
+
+
+
+calculez la moyenne de la VD avec la fonction "mean"
+
+Vous pouvez utiliser cette notation avec le tilde dans "aggregate" qui
+permettra d'utiliser une fonction ("mean" pour nous) pour différents groupes.
+pour connaitre les moyennes par modalit? de votre VI
+
+```{r}
+moyennes<-aggregate(VD~VI, data=exoX, mean)# on cr"e un vecteur avec les moyennes et stocke le r"?"sultat dans moyennes
+```
+
+
+
+
+#FAIRE UN HISTOGRAMME DES DONNEES
+
+
+On charge une library qui permet de faire des pirateplots
+```{r}
+library(yarrr)#si cette library n'est pas présente, l'installer: install.packages("yarrr")
+```
+
+```{r}
+
+pirateplot(data=exoX, #on indique sur quel objet de données on travaille
+           VD~VI,  #~veut dire en fonction: on demande à regarder la VD en fonction de la VI
+           point.o = 1, #on lui dit de représenter les données individuelles par un point opaque
+           main="Rédigez le titre", # main: permet d'ajouter un titre au graphique
+           xlab="qu'est-ce qui est en abcisse", # xlab: ajoute un titre pour l'axe des X
+           ylab="qu'est-ce qui est en ordonnée (avec l'unité)", # ylab: ajoute un titre pour l'axe des Y
+           sortx="mean") # sortx permet de déterminer l'ordre de tri sur l'axe des x (ici, par moyenne ascendante)
+```
+
+
+
+# VERIFICATION DES CONDITIONS D'APPLICATION DE L'ANOVA
+
+```{r}
+library(stats) # ce package contient des tests dont on a besoin (comme le shapiro ou le Tukey)
+```
+
+
+Shapiro.test(VD) fait un test de normalit? sur la variable
+
+la fonction "by" (par en anglais) qui va permettre d'?xécuter une instruction 
+en fonction d'un critère: *
+by(ce sur quoi on veut appliquer la fonction, le critère, la fonction)
+Combinez cette fonction avec shapiro.test pour obtenir un test de shapiro pour 
+chacun de vos groupes experimentaux et stockez le résultat dans "shap"
+
+```{r}
+shap<-by(df$pattern_value, list(df$block, df$cluster_label), shapiro.test ) # on stocke le résultat du test pour pouvoir le rappeler au besoin plus tard
+# print(shap) # Afficher le contenu de shap dans la console
+```
+
+
+
+# CALCUL DE L'ANOVA
+
+```{r}
+library(ez) #chargement du package ezANOVA
+```
+
+
+Calcul:
+
+```{r}
+anova3<-ezANOVA(data=df ,dv=pattern_value, wid=fold , 
+                # within = type,
+                between=.(cluster_label,block),
+                # between=cluster_label,
+                type=3, 
+                return_aov=T) # on stocke le résultat dans un objet anova3
+```
+
+
+
+#affichage du tableau d'ANOVA:
+```{r}
+summary(anova3$aov)
+```
+```{r}
+tukey <- TukeyHSD(anova3$aov)
+tukey$cluster_label
+```
+
+
+```{r}
+# Extract the TukeyHSD results for a specific term (e.g., 'term')
+tukey_table <- as.data.frame(tukey$`cluster_label:block`)
+
+# Keep rownames as a separate column for filtering
+tukey_table$comparison <- rownames(tukey_table)
+
+# Filter for interaction effects with the same first variable
+# Filter for interaction effects where the first variable differs
+
+# Filter for comparisons where the first variable differs, but the second part is the same
+filtered_results <- tukey_table[grep("^([^:]+):([^_]+)_([^:]+)-([^:]+):\\2_\\3$", tukey_table$comparison), ]
+
+# Add a new column that is TRUE if p-value < 0.05, FALSE otherwise
+filtered_results$significant <- filtered_results$`p adj` < 0.05
+
+# Drop the 'comparison' column
+filtered_results <- filtered_results[ , !names(filtered_results) %in% "comparison"]
+
+# View the filtered results
+print(filtered_results)
+```
+
+
+
+```{r}
+paires<- pairwise.t.test(df$pattern_value,df$cluster_label,p.adjust.method = "holm", paired = T)
+paires
+```
+
+```{r}
+library(lme4)
+model <- lmer(pattern_value ~ (block * cluster_label) + (1 | cluster_label), data = df)
+```
+
+```{r}
+library(emmeans)
+emm_grid1_block_cluster<- emmeans(model, pattern_value ~ block*cluster_label, infer="pairs")
+
+#plot interactions
+emmip(emm_grid1_block_cluster, ~ block*cluster_label, CIs=TRUE)
+
+```
+
+```{r}
+
+paircomp <- contrast(emm_grid1_block_cluster, "pairwise", adjust = "bonferroni" )
+paircomp <- as.data.frame(paircomp)
+```
+

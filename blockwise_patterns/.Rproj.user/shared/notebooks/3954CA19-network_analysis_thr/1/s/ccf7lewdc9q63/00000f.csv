@@ -1,9 +1,0 @@
-"0","anova3<-ezANOVA(data=df ,dv=pattern_value, wid=fold , "
-"0","                # within = type,"
-"0","                between=.(cluster_label,block),"
-"0","                # between=cluster_label,"
-"0","                type=3, "
-"0","                return_aov=T) # on stocke le résultat dans un objet anova3"
-"2","Avis : The column supplied as the wid variable contains non-unique values across levels of the supplied between-Ss variables. Automatically fixing this by generating unique wid labels."
-"2","Coefficient covariances computed by hccm()
-"

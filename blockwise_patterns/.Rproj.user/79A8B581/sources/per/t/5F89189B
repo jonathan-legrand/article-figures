@@ -1,6 +1,6 @@
 {
     "id": "5F89189B",
-    "path": "C:/Users/achil/GIN Dropbox/Achille Gillig/Projects/memento/blockwise_patterns/network_analysis.Rmd",
+    "path": "C:/Users/achil/GIN Dropbox/Achille Gillig/Projects/memento/article-figures/blockwise_patterns/network_analysis.Rmd",
     "project_path": "network_analysis.Rmd",
     "type": "r_markdown",
     "hash": "2608773559",
@@ -11,7 +11,9 @@
     "relative_order": 7,
     "properties": {
         "source_window_id": "",
-        "Source": "Source"
+        "Source": "Source",
+        "cursorPosition": "45,22",
+        "scrollLine": "40"
     },
     "folds": "",
     "lastKnownWriteTime": 1733908480,

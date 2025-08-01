@@ -1,4 +1,0 @@
-"0","library(lme4)"
-"0","model <- lmer(pattern_value ~ (block * cluster_label) + (1 | cluster_label), data = df)"
-"2","Avis : unable to evaluate scaled gradient"
-"2","Avis :  Hessian is numerically singular: parameters are not uniquely determined"

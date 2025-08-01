@@ -1,5 +1,0 @@
-"0","library(emmeans)"
-"0","emm_grid1_block_cluster<- emmeans(model, pattern_value ~ block*cluster_label, infer=""pairs"")"
-"2","Error in contrast.emmGrid(object = new(""emmGrid"", model.info = list(call = lmer(formula = pattern_value ~  : 
-  Contrast function 'pattern_value.emmc' not found
-"

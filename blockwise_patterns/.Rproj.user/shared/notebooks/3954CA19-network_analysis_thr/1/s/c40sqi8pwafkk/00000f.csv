@@ -1,2 +1,0 @@
-"0","shap<-by(df$pattern_value, list(df$block, df$cluster_label), shapiro.test ) # on stocke le résultat du test pour pouvoir le rappeler au besoin plus tard"
-"0","# print(shap) # Afficher le contenu de shap dans la console"

@@ -1,0 +1,3 @@
+data_dir: "/home/jonalegr/Datasets/memento"
+neuroginius : "/home/jonalegr/Projects/neuroginius"
+conn_object: "/home/jonalegr/Datasets/memento/connectivity_measure.joblib"

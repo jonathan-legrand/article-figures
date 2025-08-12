@@ -16,8 +16,18 @@ def binarize(matrix):
     neg_matrix[matrix < 0] = 1
     return pos_matrix, neg_matrix
 
-def degree_centrality(matrix):
-    pos_matrix, neg_matrix = binarize(matrix)
+def split_pos_neg(matrix):
+
+    pos_matrix = np.where(matrix > 0, matrix, 0)
+    neg_matrix = np.where(matrix < 0, matrix, 0)
+    return pos_matrix, neg_matrix
+
+def degree_centrality(matrix, weighted=False):
+    if weighted:
+        pos_matrix, neg_matrix = split_pos_neg(matrix)
+    else:
+        pos_matrix, neg_matrix = binarize(matrix)
+        
     pos_degree = pos_matrix.sum(axis=0)
     neg_degree = neg_matrix.sum(axis=0)
     return pos_degree, neg_degree
